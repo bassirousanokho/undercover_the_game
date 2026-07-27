@@ -3,10 +3,9 @@
 import { useGameStore } from '@/lib/gameStore'
 import { useT } from '@/lib/i18n/useT'
 
-export function ScoreTable({ showReset = false }: { showReset?: boolean }) {
+export function ScoreTable() {
   const t = useT()
   const scores = useGameStore((s) => s.scores)
-  const resetScores = useGameStore((s) => s.resetScores)
 
   const ranked = Object.entries(scores).sort(
     ([nameA, a], [nameB, b]) => b - a || nameA.localeCompare(nameB),
@@ -26,14 +25,6 @@ export function ScoreTable({ showReset = false }: { showReset?: boolean }) {
           <span className="font-medium">{t(count === 1 ? 'scores.points' : 'scores.pointsPlural', { count })}</span>
         </div>
       ))}
-      {showReset && (
-        <button
-          onClick={resetScores}
-          className="rounded-lg border border-neutral-300 py-2 text-sm text-neutral-500 dark:border-neutral-700"
-        >
-          {t('scores.reset')}
-        </button>
-      )}
     </div>
   )
 }

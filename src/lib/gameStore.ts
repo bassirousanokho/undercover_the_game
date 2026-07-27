@@ -22,6 +22,7 @@ interface GameStore extends GameState {
   revealAdvance: () => void
   clueAdvance: () => void
   castVote: (targetId: string) => void
+  goToPrevious: () => void
   continueAfterElimination: () => void
   submitMrWhiteGuess: (guess: string, forceCorrect?: boolean) => void
   playAgainSamePlayers: (wordPair: WordPair) => void
@@ -188,6 +189,27 @@ export const useGameStore = create<GameStore>()(
           eliminatedThisRound: [],
           ...startRound(state.players, state.seatOrder, nextRoundStartSeatIndex),
         })
+      },
+
+      goToPrevious: () => {
+        const state = get()
+
+        if (state.phase === 'reveal' && state.revealIndex > 0) {
+          set({ revealIndex: state.revealIndex - 1 })
+          return
+        }
+
+        if (state.phase === 'clue' && state.currentTurnIndex > 0) {
+          set({ currentTurnIndex: state.currentTurnIndex - 1 })
+          return
+        }
+
+        if (state.phase === 'vote' && state.currentVoterIndex > 0) {
+          const prevVoterId = state.turnOrder[state.currentVoterIndex - 1]
+          const votes = { ...state.votes }
+          delete votes[prevVoterId]
+          set({ votes, currentVoterIndex: state.currentVoterIndex - 1 })
+        }
       },
 
       playAgainSamePlayers: (wordPair) => {

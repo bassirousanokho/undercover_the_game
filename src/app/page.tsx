@@ -9,6 +9,7 @@ import { VotingPanel } from '@/components/VotingPanel'
 import { EliminationReveal } from '@/components/EliminationReveal'
 import { MrWhiteGuessForm } from '@/components/MrWhiteGuessForm'
 import { GameOverScreen } from '@/components/GameOverScreen'
+import { NavBar } from '@/components/NavBar'
 
 function useHydrated() {
   const [hydrated, setHydrated] = useState(false)
@@ -32,6 +33,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-1 flex-col bg-zinc-50 dark:bg-black">
+      <NavBar />
       {phase === 'setup' && <PlayerSetupForm />}
       {phase === 'reveal' && <WordRevealCard />}
       {phase === 'clue' && <ClueTurnOrder />}

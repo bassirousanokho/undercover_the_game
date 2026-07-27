@@ -48,11 +48,11 @@ export function GameOverScreen() {
         ))}
       </div>
 
-      <ScoreTable showReset />
+      <ScoreTable />
 
       <div className="flex w-full flex-col gap-3">
         <button
-          onClick={() => playAgainSamePlayers(pickWordPair())}
+          onClick={() => playAgainSamePlayers(pickWordPair(wordPair.theme))}
           className="rounded-xl bg-neutral-900 px-6 py-3 font-semibold text-white dark:bg-white dark:text-neutral-900"
         >
           {t('gameover.playAgain')}

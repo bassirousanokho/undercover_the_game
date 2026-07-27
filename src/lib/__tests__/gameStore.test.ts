@@ -167,3 +167,95 @@ describe('gameStore full playthrough', () => {
     expect(useGameStore.getState().eliminatedThisRound).toEqual([a])
   })
 })
+
+describe('goToPrevious', () => {
+  it('steps back one reveal at a time and is a no-op at the first player', () => {
+    useGameStore.getState().startGame({
+      playerNames: ['Alice', 'Bob', 'Carol'],
+      roleCounts: { undercover: 1, mrwhite: 1 },
+      wordPair,
+    })
+    useGameStore.getState().revealAdvance()
+    useGameStore.getState().revealAdvance()
+    expect(useGameStore.getState().revealIndex).toBe(2)
+
+    useGameStore.getState().goToPrevious()
+    expect(useGameStore.getState().revealIndex).toBe(1)
+    expect(useGameStore.getState().phase).toBe('reveal')
+
+    useGameStore.getState().goToPrevious()
+    expect(useGameStore.getState().revealIndex).toBe(0)
+
+    useGameStore.getState().goToPrevious()
+    expect(useGameStore.getState().revealIndex).toBe(0)
+  })
+
+  it('steps back one clue turn at a time and is a no-op at the first turn', () => {
+    useGameStore.getState().startGame({
+      playerNames: ['Alice', 'Bob', 'Carol'],
+      roleCounts: { undercover: 1, mrwhite: 1 },
+      wordPair,
+    })
+    revealEveryone()
+    useGameStore.getState().clueAdvance()
+    expect(useGameStore.getState().currentTurnIndex).toBe(1)
+
+    useGameStore.getState().goToPrevious()
+    expect(useGameStore.getState().currentTurnIndex).toBe(0)
+    expect(useGameStore.getState().phase).toBe('clue')
+
+    useGameStore.getState().goToPrevious()
+    expect(useGameStore.getState().currentTurnIndex).toBe(0)
+  })
+
+  it('undoes the last cast vote and lets the voter re-vote', () => {
+    useGameStore.getState().startGame({
+      playerNames: ['Alice', 'Bob', 'Carol'],
+      roleCounts: { undercover: 1, mrwhite: 1 },
+      wordPair,
+    })
+    revealEveryone()
+    runClueRoundToVote()
+
+    const { turnOrder, players } = useGameStore.getState()
+    const firstVoter = turnOrder[0]
+    const secondVoter = turnOrder[1]
+    const target = players.find((p) => p.id !== firstVoter)!.id
+
+    useGameStore.getState().castVote(target)
+    expect(useGameStore.getState().currentVoterIndex).toBe(1)
+    expect(useGameStore.getState().votes[firstVoter]).toBe(target)
+
+    useGameStore.getState().castVote(target)
+    expect(useGameStore.getState().currentVoterIndex).toBe(2)
+    expect(useGameStore.getState().votes[secondVoter]).toBe(target)
+
+    useGameStore.getState().goToPrevious()
+    expect(useGameStore.getState().currentVoterIndex).toBe(1)
+    expect(useGameStore.getState().votes[secondVoter]).toBeUndefined()
+    expect(useGameStore.getState().votes[firstVoter]).toBe(target)
+    expect(useGameStore.getState().phase).toBe('vote')
+  })
+
+  it('does nothing during elimination, mrwhite-guess, or gameover phases', () => {
+    useGameStore.getState().startGame({
+      playerNames: ['Alice', 'Bob', 'Carol', 'Dave'],
+      roleCounts: { undercover: 1, mrwhite: 1 },
+      wordPair,
+    })
+    revealEveryone()
+    runClueRoundToVote()
+    const [mrwhiteId] = idsByRole('mrwhite')
+    voteAllFor(mrwhiteId)
+
+    const stateAtElimination = useGameStore.getState()
+    useGameStore.getState().goToPrevious()
+    expect(useGameStore.getState().phase).toBe('elimination')
+    expect(useGameStore.getState().eliminatedThisRound).toEqual(stateAtElimination.eliminatedThisRound)
+
+    useGameStore.getState().continueAfterElimination()
+    expect(useGameStore.getState().phase).toBe('mrwhite-guess')
+    useGameStore.getState().goToPrevious()
+    expect(useGameStore.getState().phase).toBe('mrwhite-guess')
+  })
+})

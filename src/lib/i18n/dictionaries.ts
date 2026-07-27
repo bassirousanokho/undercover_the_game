@@ -79,6 +79,14 @@ export const dictionaries = {
       pointsPlural: '{count} pts',
       reset: 'Réinitialiser les scores',
     },
+    nav: {
+      home: 'Accueil',
+      previous: 'Précédent',
+      restart: 'Recommencer',
+      confirmHome: 'Abandonner la partie en cours et retourner à l\'accueil ?',
+      confirmRestart: 'Recommencer la partie avec les mêmes joueurs et de nouveaux rôles ?',
+      confirmResetScores: 'Réinitialiser le tableau des scores ? Cette action est irréversible.',
+    },
     common: {
       language: 'Langue',
       back: 'Retour',
@@ -163,6 +171,14 @@ export const dictionaries = {
       points: '{count} pt',
       pointsPlural: '{count} pts',
       reset: 'Reset scores',
+    },
+    nav: {
+      home: 'Home',
+      previous: 'Previous',
+      restart: 'Restart',
+      confirmHome: 'Abandon the current game and go back home?',
+      confirmRestart: 'Restart the game with the same players and new roles?',
+      confirmResetScores: 'Reset the scoreboard? This cannot be undone.',
     },
     common: {
       language: 'Language',
