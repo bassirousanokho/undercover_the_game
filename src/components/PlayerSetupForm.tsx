@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react'
 import { useGameStore, defaultRoleCounts } from '@/lib/gameStore'
 import { isRoleCountValid } from '@/lib/roleAssignment'
 import { THEMES, pickWordPair } from '@/lib/wordBank'
-import { generateWordPair } from '@/lib/llmWordGenerator'
 import { useT } from '@/lib/i18n/useT'
 import { LanguageToggle } from './LanguageToggle'
 
@@ -31,15 +30,13 @@ export function PlayerSetupForm() {
     lastSetup?.roleCounts ?? defaultRoleCounts(3),
   )
   const [theme, setTheme] = useState<string>('')
-  const [generating, setGenerating] = useState(false)
-  const [generateError, setGenerateError] = useState(false)
 
   const trimmedNames = playerNames.map((n) => n.trim())
   const filledNames = trimmedNames.filter((n) => n.length > 0)
   const hasDuplicates = new Set(filledNames).size !== filledNames.length
   const hasEnoughPlayers = filledNames.length >= 3 && filledNames.length === playerNames.length
   const rolesValid = isRoleCountValid(playerNames.length, roleCounts)
-  const canStart = hasEnoughPlayers && !hasDuplicates && rolesValid && !generating
+  const canStart = hasEnoughPlayers && !hasDuplicates && rolesValid
 
   function updateName(index: number, value: string) {
     setPlayerNames((prev) => prev.map((n, i) => (i === index ? value : n)))
@@ -61,18 +58,9 @@ export function PlayerSetupForm() {
     })
   }
 
-  function handleStart(customWordPair?: Awaited<ReturnType<typeof generateWordPair>>['wordPair']) {
-    const wordPair = customWordPair ?? pickWordPair(theme || undefined)
+  function handleStart() {
+    const wordPair = pickWordPair(theme || undefined)
     startGame({ playerNames: filledNames, roleCounts, wordPair })
-  }
-
-  async function handleGenerateAndStart() {
-    setGenerating(true)
-    setGenerateError(false)
-    const { wordPair, usedFallback } = await generateWordPair(theme || undefined)
-    setGenerating(false)
-    if (usedFallback) setGenerateError(true)
-    handleStart(wordPair)
   }
 
   const themeOptions = useMemo(() => THEMES, [])
@@ -179,18 +167,10 @@ export function PlayerSetupForm() {
             </option>
           ))}
         </select>
-        <button
-          onClick={handleGenerateAndStart}
-          disabled={!canStart}
-          className="rounded-lg border border-neutral-400 py-2 text-sm font-medium disabled:opacity-40 dark:border-neutral-600"
-        >
-          {generating ? t('setup.generating') : t('setup.generateWithAI')}
-        </button>
-        {generateError && <p className="text-sm text-amber-600">{t('setup.generateFailed')}</p>}
       </section>
 
       <button
-        onClick={() => handleStart()}
+        onClick={handleStart}
         disabled={!canStart}
         className="rounded-xl bg-neutral-900 py-3 text-lg font-semibold text-white disabled:opacity-40 dark:bg-white dark:text-neutral-900"
       >
