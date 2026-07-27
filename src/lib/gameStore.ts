@@ -4,6 +4,7 @@ import type { GameState, Lang, Player, RoleCounts, WordPair } from './types'
 import { assignRoles, buildSeatOrder, buildTurnOrder, defaultRoleCounts } from './roleAssignment'
 import { checkImmediateWin } from './winConditions'
 import { isGuessCorrect } from './normalizeGuess'
+import { applyWinToScores } from './scoring'
 
 interface SetupSnapshot {
   playerNames: string[]
@@ -14,6 +15,7 @@ interface GameStore extends GameState {
   seatOrder: string[]
   roundStartSeatIndex: number
   lastSetup: SetupSnapshot | null
+  scores: Record<string, number>
 
   setLang: (lang: Lang) => void
   startGame: (setup: SetupSnapshot & { wordPair: WordPair }) => void
@@ -24,6 +26,7 @@ interface GameStore extends GameState {
   submitMrWhiteGuess: (guess: string, forceCorrect?: boolean) => void
   playAgainSamePlayers: (wordPair: WordPair) => void
   resetToSetup: () => void
+  resetScores: () => void
 }
 
 const initialGameState: GameState = {
@@ -54,6 +57,7 @@ export const useGameStore = create<GameStore>()(
       seatOrder: [],
       roundStartSeatIndex: 0,
       lastSetup: null,
+      scores: {},
 
       setLang: (lang) => set({ lang }),
 
@@ -142,7 +146,7 @@ export const useGameStore = create<GameStore>()(
 
         const winner = checkImmediateWin(state.players)
         if (winner) {
-          set({ phase: 'gameover', winner })
+          set({ phase: 'gameover', winner, scores: applyWinToScores(state.players, winner, state.scores) })
           return
         }
 
@@ -162,13 +166,17 @@ export const useGameStore = create<GameStore>()(
         const correct = forceCorrect || isGuessCorrect(guess, civilianWord)
 
         if (correct) {
-          set({ phase: 'gameover', winner: 'mrwhite' })
+          set({
+            phase: 'gameover',
+            winner: 'mrwhite',
+            scores: applyWinToScores(state.players, 'mrwhite', state.scores),
+          })
           return
         }
 
         const winner = checkImmediateWin(state.players)
         if (winner) {
-          set({ phase: 'gameover', winner })
+          set({ phase: 'gameover', winner, scores: applyWinToScores(state.players, winner, state.scores) })
           return
         }
 
@@ -189,6 +197,8 @@ export const useGameStore = create<GameStore>()(
       },
 
       resetToSetup: () => set({ ...initialGameState, lang: get().lang, seatOrder: [], roundStartSeatIndex: 0 }),
+
+      resetScores: () => set({ scores: {} }),
     }),
     { name: 'undercover-game-state', skipHydration: true },
   ),

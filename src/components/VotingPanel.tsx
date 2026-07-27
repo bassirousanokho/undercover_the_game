@@ -24,7 +24,7 @@ function VoterStep({
         onClick={() => setReady(true)}
         className="rounded-xl bg-neutral-900 px-6 py-3 font-semibold text-white dark:bg-white dark:text-neutral-900"
       >
-        {t('reveal.tapToReveal')}
+        {t('vote.tapToVote')}
       </button>
     )
   }

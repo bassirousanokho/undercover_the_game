@@ -38,10 +38,8 @@ export const dictionaries = {
     vote: {
       title: 'Vote — Tour {round}',
       passTo: 'Passe l\'appareil à {name}',
+      tapToVote: 'Appuie pour voter',
       instructions: '{name}, qui penses-tu être Undercover ou Mr. White ?',
-      confirmVote: 'Confirmer le vote',
-      allVoted: 'Tous les votes sont enregistrés',
-      revealResults: 'Voir les résultats',
       revoteNeeded: 'Égalité entre {names}. Nouveau vote entre ces joueurs.',
     },
     elimination: {
@@ -74,6 +72,12 @@ export const dictionaries = {
       wordsWere: 'Mot civils : {civilian} — Mot undercover : {undercover}',
       playAgain: 'Rejouer avec les mêmes joueurs',
       newGame: 'Nouvelle partie',
+    },
+    scores: {
+      title: 'Tableau des scores',
+      points: '{count} pt',
+      pointsPlural: '{count} pts',
+      reset: 'Réinitialiser les scores',
     },
     common: {
       language: 'Langue',
@@ -119,10 +123,8 @@ export const dictionaries = {
     vote: {
       title: 'Vote — Round {round}',
       passTo: 'Pass the device to {name}',
+      tapToVote: 'Tap to vote',
       instructions: '{name}, who do you think is Undercover or Mr. White?',
-      confirmVote: 'Confirm vote',
-      allVoted: 'All votes are recorded',
-      revealResults: 'See results',
       revoteNeeded: 'Tie between {names}. Revote among these players.',
     },
     elimination: {
@@ -155,6 +157,12 @@ export const dictionaries = {
       wordsWere: 'Civilian word: {civilian} — Undercover word: {undercover}',
       playAgain: 'Play again with the same players',
       newGame: 'New game',
+    },
+    scores: {
+      title: 'Scoreboard',
+      points: '{count} pt',
+      pointsPlural: '{count} pts',
+      reset: 'Reset scores',
     },
     common: {
       language: 'Language',

@@ -6,6 +6,7 @@ import { isRoleCountValid } from '@/lib/roleAssignment'
 import { THEMES, pickWordPair } from '@/lib/wordBank'
 import { useT } from '@/lib/i18n/useT'
 import { LanguageToggle } from './LanguageToggle'
+import { ScoreTable } from './ScoreTable'
 
 const THEME_LABELS: Record<string, { fr: string; en: string }> = {
   animals: { fr: 'Animaux', en: 'Animals' },
@@ -168,6 +169,8 @@ export function PlayerSetupForm() {
           ))}
         </select>
       </section>
+
+      <ScoreTable />
 
       <button
         onClick={handleStart}

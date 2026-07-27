@@ -3,6 +3,7 @@
 import { useGameStore } from '@/lib/gameStore'
 import { pickWordPair } from '@/lib/wordBank'
 import { useT } from '@/lib/i18n/useT'
+import { ScoreTable } from './ScoreTable'
 
 export function GameOverScreen() {
   const t = useT()
@@ -46,6 +47,8 @@ export function GameOverScreen() {
           </div>
         ))}
       </div>
+
+      <ScoreTable showReset />
 
       <div className="flex w-full flex-col gap-3">
         <button
