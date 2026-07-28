@@ -1,13 +1,12 @@
 import type { NextConfig } from "next";
 
-const isGithubPages = process.env.GITHUB_PAGES === "true";
-const repoName = "undercover_the_game";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 const nextConfig: NextConfig = {
   output: "export",
   images: { unoptimized: true },
-  basePath: isGithubPages ? `/${repoName}` : "",
-  assetPrefix: isGithubPages ? `/${repoName}/` : "",
+  basePath,
+  assetPrefix: basePath ? `${basePath}/` : undefined,
   turbopack: { root: process.cwd() },
 };
 
